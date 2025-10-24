@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Post } from "@my-blog/common";
+import { Post } from "../types";
 import { Page, PageTitle, Section } from "../components";
 import { renderPostDetails } from "../utils/renderPostDetails";
 import { usePosts } from "../context/PostContext";
@@ -44,7 +44,8 @@ export default function Archive() {
 
   // Process each post once - O(n)
   posts?.forEach((post: Post) => {
-    const date: Date = new Date(post.publishedAt * 1000);
+    // publishedAt is an ISO 8601 string from the backend
+    const date: Date = new Date(post.publishedAt);
     const year: string = date.getFullYear().toString();
     const month: string = date.toLocaleString("en-US", { month: "long" });
 
@@ -130,8 +131,8 @@ export default function Archive() {
                       {monthGroup.posts
                         .sort(
                           (a, b) =>
-                            new Date(b.publishedAt * 1000).getDate() -
-                            new Date(a.publishedAt * 1000).getDate()
+                            new Date(b.publishedAt).getDate() -
+                            new Date(a.publishedAt).getDate()
                         )
                         .map((post) => {
                           return (

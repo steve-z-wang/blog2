@@ -1,16 +1,15 @@
-import { SubscribeByEmailRequestSchema, Post, ListPostsResponse, Comment } from "@my-blog/common";
+import type { Post, ListPostsResponse, Comment } from "../types";
 
 export async function subscribeByEmail(email: string): Promise<void> {
   const request = { email };
-  try {
-    SubscribeByEmailRequestSchema.parse(request); // Validate request
-  } catch (error) {
+  // Basic email validation
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     throw new Error(
       "Invalid email format. Please enter a valid email address."
     );
   }
 
-  const response = await fetch("/api/subscribe", {
+  const response = await fetch("/api/subscriptions", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -32,12 +31,12 @@ export async function fetchPosts(): Promise<Post[]> {
   return data.posts;
 }
 
-export async function getPost(id: string): Promise<Post> {
-  const response = await fetch(`/api/posts/${id}`);
+export async function getPost(slug: string): Promise<Post> {
+  const response = await fetch(`/api/posts/${slug}`);
   if (!response.ok) throw new Error("Failed to fetch post");
-  
+
   const data = await response.json();
-  return data.post;
+  return data; // Backend returns post directly, not wrapped
 }
 
 export async function createComment(
@@ -63,5 +62,5 @@ export async function createComment(
   }
 
   const data = await response.json();
-  return data.comment;
+  return data; // Backend returns comment directly
 }

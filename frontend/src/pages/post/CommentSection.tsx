@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import type { Comment } from "@my-blog/common";
-import { Button, Input, Form, useNotification } from "frontend/src/components";
+import type { Comment } from "../types";
+import { Button, Input, Form, useNotification } from "../../components";
 import { createComment } from "../../utils/api";
 
 interface CommentSectionProps {
@@ -38,10 +38,11 @@ export default function CommentSection(props: CommentSectionProps) {
   // Get latest activity timestamp
   const getLatestActivity = (comment: Comment): number => {
     const replies = getReplies(comment.id);
-    return Math.max(
-      comment.createdAt || 0,
-      ...replies.map((reply) => reply.createdAt || 0)
-    );
+    const timestamps = [
+      comment.createdAt ? new Date(comment.createdAt).getTime() : 0,
+      ...replies.map((reply) => reply.createdAt ? new Date(reply.createdAt).getTime() : 0)
+    ];
+    return Math.max(...timestamps);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -95,7 +96,7 @@ export default function CommentSection(props: CommentSectionProps) {
 
           <span className="text-muted text-sm">
             {comment.createdAt
-              ? new Date(comment.createdAt * 1000).toLocaleDateString()
+              ? new Date(comment.createdAt).toLocaleDateString()
               : "Just now"}
           </span>
 

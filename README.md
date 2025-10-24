@@ -52,7 +52,7 @@ npm run prisma:seed
 npm run dev
 ```
 
-Backend will run on http://localhost:5000
+Backend will run on http://localhost:5001
 
 ### 3. Set up Frontend
 
@@ -125,8 +125,8 @@ Frontend will run on http://localhost:5173
 ### Backend (.env)
 
 ```env
-DATABASE_URL="postgresql://blog_user:blog_password@localhost:5432/blog_db?schema=public"
-PORT=5000
+DATABASE_URL="postgresql://YOUR_USERNAME@localhost:5432/blog_db?schema=public"
+PORT=5001
 NODE_ENV=development
 CORS_ORIGIN=http://localhost:5173
 ```

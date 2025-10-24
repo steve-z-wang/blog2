@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import type { Post } from "@my-blog/common";
+import type { Post } from "../types";
 import { fetchPosts } from "../utils/api";
 
 interface PostContextType {

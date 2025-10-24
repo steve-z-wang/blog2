@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import type { Post } from "@my-blog/common";
+import type { Post } from "../types";
 import ReactMarkdown from "react-markdown";
 import CommentSection from "./CommentSection";
-import { Section, Page, PageTitle } from "frontend/src/components";
+import { Section, Page, PageTitle } from "../../components";
 import NotFound from "../NotFound";
 import { getPost } from "../../utils/api";
-import { renderPostDetails } from "frontend/src/utils/renderPostDetails";
+import { renderPostDetails } from "../../utils/renderPostDetails";
 
 export default function Post() {
   const { id } = useParams();

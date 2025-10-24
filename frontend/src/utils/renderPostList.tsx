@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { renderPostDetails } from "./renderPostDetails";
-import { Post } from "@my-blog/common";
+import { Post } from "../types";
 
 export function renderPostList(posts: Post[]) {
   return (

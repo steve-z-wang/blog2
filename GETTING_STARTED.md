@@ -96,9 +96,9 @@ npm run prisma:seed
 npm run dev
 ```
 
-The backend will start on **http://localhost:5000**
+The backend will start on **http://localhost:5001**
 
-Test it: Open http://localhost:5000/health in your browser
+Test it: Open http://localhost:5001/health in your browser
 
 ### 3. Set Up the Frontend
 
@@ -133,30 +133,26 @@ npm run generate:types
 
 ```bash
 # Get all posts
-curl http://localhost:5000/api/posts
+curl http://localhost:5001/api/posts
 
 # Get a specific post
-curl http://localhost:5000/api/posts/welcome-to-my-blog
+curl http://localhost:5001/api/posts/welcome-to-my-blog
 
 # Get all tags
-curl http://localhost:5000/api/posts/tags
+curl http://localhost:5001/api/posts/tags
 
 # Get comments for a post
-curl http://localhost:5000/api/comments/posts/welcome-to-my-blog/comments
+curl http://localhost:5001/api/comments/posts/welcome-to-my-blog/comments
 
-# Create a comment
-curl -X POST http://localhost:5000/api/comments \
-  -H "Content-Type: application/json" \
-  -d '{
-    "postId": 1,
-    "authorName": "Test User",
-    "content": "Great post!"
-  }'
+# Create a comment (use printf to avoid shell escaping issues)
+printf '{"postId":1,"authorName":"Test User","content":"Great post!"}' | \
+  curl -X POST http://localhost:5001/api/comments \
+  -H "Content-Type: application/json" -d @-
 
 # Subscribe to newsletter
-curl -X POST http://localhost:5000/api/subscriptions \
-  -H "Content-Type: application/json" \
-  -d '{"email": "user@example.com"}'
+printf '{"email":"user@example.com"}' | \
+  curl -X POST http://localhost:5001/api/subscriptions \
+  -H "Content-Type: application/json" -d @-
 ```
 
 ### Using Prisma Studio
@@ -284,15 +280,17 @@ After running `npm run prisma:seed`, you'll have:
 
 ### Backend (.env)
 ```env
-DATABASE_URL="postgresql://blog_user:blog_password@localhost:5432/blog_db?schema=public"
-PORT=5000
+DATABASE_URL="postgresql://YOUR_USERNAME@localhost:5432/blog_db?schema=public"
+PORT=5001
 NODE_ENV=development
 CORS_ORIGIN=http://localhost:5173
 ```
 
+**Note**: Replace `YOUR_USERNAME` with your actual system username. For local PostgreSQL via Homebrew, you typically don't need a password.
+
 ### Frontend (optional .env)
 ```env
-VITE_API_BASE_URL=http://localhost:5000/api
+VITE_API_BASE_URL=http://localhost:5001/api
 ```
 
 ## Development Tips

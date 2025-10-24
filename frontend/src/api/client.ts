@@ -1,7 +1,7 @@
 // Type-safe API client for the blog backend
 // Types will be generated from OpenAPI spec
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api';
 
 export class APIError extends Error {
   constructor(

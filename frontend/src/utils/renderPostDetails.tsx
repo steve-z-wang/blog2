@@ -1,9 +1,9 @@
-import { Post } from "@my-blog/common";
+import { Post } from "../types";
 
 export function renderPostDetails(post: Post) {
   return (
     <div className="mt-2 text-sm text-muted font-medium">
-      {new Date(post.publishedAt * 1000).toLocaleDateString("en-US", {
+      {new Date(post.publishedAt).toLocaleDateString("en-US", {
         year: "numeric",
         month: "long",
         day: "numeric",

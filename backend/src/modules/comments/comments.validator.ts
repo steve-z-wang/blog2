@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const createCommentSchema = z.object({
   postId: z.number().int().positive(),
-  parentId: z.number().int().positive().optional(),
+  parentId: z.number().int().positive().optional().nullable(),
   authorName: z.string().min(1).max(100),
   content: z.string().min(1).max(2000),
 });

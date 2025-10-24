@@ -1,35 +1,31 @@
-# Dependencies
-node_modules/
-.pnp
-.pnp.js
-
-# Environment variables
-# Never commit .env files - use .env.example instead
+# Environment variables (contain sensitive data)
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
-backend/.env
-frontend/.env
+.env.*.local
+.env.production
+*.pem
+*.key
+
+# Terraform state files (contain sensitive data like passwords, IPs, etc.)
+terraform.tfstate
+terraform.tfstate.backup
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
 
 # Build outputs
 dist/
 build/
 *.tsbuildinfo
-
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-pnpm-debug.log*
-
-# OS files
-.DS_Store
-Thumbs.db
 
 # IDE
 .vscode/
@@ -37,25 +33,16 @@ Thumbs.db
 *.swp
 *.swo
 *~
+.DS_Store
 
-# Generated files
-openapi.json
-openapi.yaml
-backend/openapi.json
-backend/openapi.yaml
-frontend/src/api/generated/types.ts
+# Logs
+logs/
+*.log
 
-# Database
-*.db
-*.db-journal
-
-# Docker volumes (persistent data)
-# Note: docker-compose.yml volumes are managed by Docker
-
-# Test coverage
-coverage/
-.nyc_output/
-
-# Temporary files
+# Temp files
 *.tmp
+*.temp
 .cache/
+
+# OS
+Thumbs.db

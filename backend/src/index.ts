@@ -28,9 +28,9 @@ app.get('/health', (req, res) => {
 });
 
 // API routes
-app.use('/api/posts', postsRoutes);
-app.use('/api/comments', commentsRoutes);
-app.use('/api/subscriptions', subscriptionsRoutes);
+app.use('/posts', postsRoutes);
+app.use('/comments', commentsRoutes);
+app.use('/subscriptions', subscriptionsRoutes);
 
 // 404 handler
 app.use((req, res) => {

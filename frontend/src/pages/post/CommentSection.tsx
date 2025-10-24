@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import type { Comment } from "../types";
 import { Button, Input, Form, useNotification } from "../../components";
-import { createComment } from "../../utils/api";
+import { api } from "../../api/client";
 
 interface CommentSectionProps {
   postId: number;
@@ -56,13 +56,13 @@ export default function CommentSection(props: CommentSectionProps) {
     }
 
     try {
-      const newComment = await createComment(
-        props.postId,
+      const newComment = await api.comments.create({
+        postId: props.postId,
         authorName,
         content,
-        replyingTo
-      );
-      
+        parentId: replyingTo || undefined,
+      });
+
       setComments((prev) => [...prev, newComment]);
 
       // Reset form

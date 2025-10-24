@@ -1,7 +1,8 @@
 // Type-safe API client for the blog backend
 // Types will be generated from OpenAPI spec
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';
+const ADMIN_API_KEY = import.meta.env.VITE_ADMIN_API_KEY;
 
 export class APIError extends Error {
   constructor(
@@ -16,16 +17,23 @@ export class APIError extends Error {
 
 async function fetchJSON<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  requireAuth: boolean = false
 ): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
 
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...options.headers as Record<string, string>,
+  };
+
+  if (requireAuth && ADMIN_API_KEY) {
+    headers['Authorization'] = `Bearer ${ADMIN_API_KEY}`;
+  }
+
   const response = await fetch(url, {
     ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
+    headers,
   });
 
   if (!response.ok) {
@@ -101,7 +109,7 @@ export const postsAPI = {
     fetchJSON(`/posts/internal/posts`, {
       method: 'POST',
       body: JSON.stringify(data),
-    }),
+    }, true),
 
   update: (slug: string, data: Partial<{
     slug: string;
@@ -113,12 +121,12 @@ export const postsAPI = {
     fetchJSON(`/posts/internal/posts/${slug}`, {
       method: 'PUT',
       body: JSON.stringify(data),
-    }),
+    }, true),
 
   delete: (slug: string) =>
     fetchJSON(`/posts/internal/posts/${slug}`, {
       method: 'DELETE',
-    }),
+    }, true),
 };
 
 // Comments API

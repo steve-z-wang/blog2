@@ -1,0 +1,30 @@
+# Copy this file to terraform.tfvars and fill in your values
+# DO NOT commit terraform.tfvars to git!
+
+aws_region  = "us-east-1"
+environment = "prod"
+project_name = "blog-v2"
+
+# Your domain name (you must own this domain)
+domain_name = "example.com"
+
+# Database configuration
+db_name     = "blog_db"
+db_username = "postgres"
+# db_password = "set via environment variable TF_VAR_db_password"
+
+# RDS configuration
+rds_instance_class          = "db.t4g.micro"  # Free tier eligible
+rds_allocated_storage       = 20
+rds_backup_retention_days   = 7
+enable_rds_deletion_protection = true
+
+# Backend ECS configuration
+backend_container_port = 5001
+backend_cpu           = 256   # 0.25 vCPU
+backend_memory        = 512   # 512 MB
+backend_desired_count = 2     # Number of tasks
+
+# VPC configuration
+vpc_cidr           = "10.0.0.0/16"
+availability_zones = ["us-east-1a", "us-east-1b"]

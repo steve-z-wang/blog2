@@ -8,7 +8,7 @@ import {
   Form,
   PageTitle,
 } from "../components";
-import { subscribeByEmail } from "../utils/api";
+import { api } from "../api/client";
 
 interface SubscribeProps {}
 
@@ -25,7 +25,7 @@ export default function Subscribe({}: SubscribeProps) {
     }
 
     try {
-      await subscribeByEmail(email);
+      await api.subscriptions.subscribe(email);
       showNotification("Subscribed successfully!", "success");
       if (emailRef.current) {
         emailRef.current.value = "";

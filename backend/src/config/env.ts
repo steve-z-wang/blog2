@@ -8,6 +8,7 @@ const envSchema = z.object({
   PORT: z.string().default('5000'),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
+  ADMIN_API_KEY: z.string().min(32, 'Admin API key must be at least 32 characters'),
 });
 
 export const env = envSchema.parse(process.env);

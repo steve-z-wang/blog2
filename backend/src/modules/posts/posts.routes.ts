@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { PostsService } from './posts.service';
 import { validate, validateQuery, validateParams } from '../../shared/middleware/validate';
+import { requireApiKey } from '../../shared/middleware/auth';
 import {
   createPostSchema,
   updatePostSchema,
@@ -39,8 +40,8 @@ router.get('/:slug', validateParams(postSlugParamSchema), async (req, res, next)
   }
 });
 
-// Internal routes (should be protected in production)
-router.post('/internal/posts', validate(createPostSchema), async (req, res, next) => {
+// Internal routes (protected with API key)
+router.post('/internal/posts', requireApiKey, validate(createPostSchema), async (req, res, next) => {
   try {
     const post = await postsService.createPost(req.body);
     res.status(201).json(post);
@@ -51,6 +52,7 @@ router.post('/internal/posts', validate(createPostSchema), async (req, res, next
 
 router.put(
   '/internal/posts/:slug',
+  requireApiKey,
   validateParams(postSlugParamSchema),
   validate(updatePostSchema),
   async (req, res, next) => {
@@ -63,7 +65,7 @@ router.put(
   }
 );
 
-router.delete('/internal/posts/:slug', validateParams(postSlugParamSchema), async (req, res, next) => {
+router.delete('/internal/posts/:slug', requireApiKey, validateParams(postSlugParamSchema), async (req, res, next) => {
   try {
     await postsService.deletePost(req.params.slug);
     res.status(204).send();

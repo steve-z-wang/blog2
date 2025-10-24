@@ -5,7 +5,7 @@ import ReactMarkdown from "react-markdown";
 import CommentSection from "./CommentSection";
 import { Section, Page, PageTitle } from "../../components";
 import NotFound from "../NotFound";
-import { getPost } from "../../utils/api";
+import { api } from "../../api/client";
 import { renderPostDetails } from "../../utils/renderPostDetails";
 
 export default function Post() {
@@ -21,7 +21,7 @@ export default function Post() {
       }
 
       try {
-        const fetchedPost = await getPost(id);
+        const fetchedPost = await api.posts.getBySlug(id);
         setPost(fetchedPost);
       } catch (err) {
         // If post is not found, render NotFound page

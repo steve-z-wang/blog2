@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import type { Post } from "../types";
-import { fetchPosts } from "../utils/api";
+import { api } from "../api/client";
 
 interface PostContextType {
   posts: Post[];
@@ -18,8 +18,8 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
   const loadPosts = async () => {
     try {
       setLoading(true);
-      const data = await fetchPosts();
-      setPosts(data);
+      const data = await api.posts.getAll();
+      setPosts(data.posts);
       setError(null);
     } catch (err) {
       console.error("Failed to load posts:", err);

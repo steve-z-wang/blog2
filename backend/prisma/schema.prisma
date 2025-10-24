@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Post {
+  id          Int       @id @default(autoincrement())
+  slug        String    @unique
+  title       String
+  summary     String?
+  content     String
+  publishedAt DateTime  @default(now()) @map("published_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  comments    Comment[]
+  tags        TagPost[]
+
+  @@map("posts")
+}
+
+model Tag {
+  id      Int       @id @default(autoincrement())
+  name    String    @unique @map("tag_name")
+
+  posts   TagPost[]
+
+  @@map("tags")
+}
+
+model TagPost {
+  tagId   Int  @map("tag_id")
+  postId  Int  @map("post_id")
+
+  tag     Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  post    Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@id([tagId, postId])
+  @@map("tag_posts")
+}
+
+model Comment {
+  id         Int       @id @default(autoincrement())
+  postId     Int       @map("post_id")
+  parentId   Int?      @map("parent_id")
+  authorName String    @map("author_name")
+  content    String
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  post       Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parent     Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies    Comment[] @relation("CommentReplies")
+
+  @@map("comments")
+}
+
+model EmailSubscription {
+  email        String   @id
+  subscribedAt DateTime @default(now()) @map("subscribed_at")
+
+  @@map("email_subscriptions")
+}

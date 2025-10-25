@@ -148,7 +148,6 @@ resource "aws_instance" "blog" {
 # Elastic IP
 resource "aws_eip" "blog" {
   instance = aws_instance.blog.id
-  domain   = "vpc"
 
   tags = {
     Name = "${var.project_name}-eip"

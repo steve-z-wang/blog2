@@ -8,53 +8,40 @@ on:
       - '.github/workflows/deploy-backend.yml'
 
 env:
-  AWS_REGION: us-east-1
-  ECR_REPOSITORY: blog-v2-backend
-  ECS_CLUSTER: blog-v2-cluster
-  ECS_SERVICE: blog-v2-backend-service
+  EC2_HOST: 18.204.15.151
+  EC2_USER: ubuntu
 
 jobs:
   deploy:
-    name: Deploy to ECS
+    name: Deploy to EC2
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Build, tag, and push image to Amazon ECR
-        id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
+      - name: Setup SSH key
         run: |
-          cd backend
-          docker build --platform linux/amd64 -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/blog-key.pem
+          chmod 600 ~/.ssh/blog-key.pem
+          ssh-keyscan -H ${{ env.EC2_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Force ECS service redeployment
+      - name: Deploy to EC2
         run: |
-          aws ecs update-service \
-            --cluster ${{ env.ECS_CLUSTER }} \
-            --service ${{ env.ECS_SERVICE }} \
-            --force-new-deployment
+          ssh -i ~/.ssh/blog-key.pem ${{ env.EC2_USER }}@${{ env.EC2_HOST }} << 'EOF'
+            cd ~/blog2
+            git pull origin main
+            cd backend
+            npm install
+            npm run build
+            npx prisma generate
+            npx prisma migrate deploy
+            sudo systemctl restart blog-backend
+            sudo systemctl status blog-backend --no-pager
+          EOF
 
-      - name: Wait for service stability
+      - name: Verify deployment
         run: |
-          aws ecs wait services-stable \
-            --cluster ${{ env.ECS_CLUSTER }} \
-            --services ${{ env.ECS_SERVICE }}
+          sleep 5
+          curl -f https://api.stevewanglog.com/health || exit 1
